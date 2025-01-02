@@ -1,6 +1,5 @@
 <?php
 include('header.php');
-session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -10,19 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$event_id = isset($_GET['event_id']) ? intval($_GET['event_id']) : null; // Sanitize input
-
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "jomrun";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
 
 // Fetch user data
 $user_sql = "SELECT * FROM users WHERE id = ?";
@@ -46,17 +32,15 @@ if ($user_result->num_rows > 0) {
 // Fetch event data
 $event_name = "Event"; // Default event name
 if ($event_id) {
-    $event_sql = "SELECT event_name FROM events WHERE id = ?";
-    $event_stmt = $conn->prepare($event_sql);
-    $event_stmt->bind_param("i", $event_id);
-    $event_stmt->execute();
-    $event_result = $event_stmt->get_result();
-
-    if ($event_result->num_rows > 0) {
-        $event = $event_result->fetch_assoc();
-        $event_name = $event['event_name']; // Access the correct column name
+    $eventQuery = "SELECT * FROM events WHERE event_id = ?";
+    $stmt = $conn->prepare($eventQuery);
+    $stmt->bind_param("i", $event_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $event = $result->fetch_assoc();
     } else {
-        $event_name = "Unknown Event"; // If no matching event is found
+        die("Event not found!");
     }
 } else {
     $event_name = "No Event Specified"; // If event_id is missing
@@ -69,10 +53,10 @@ $conn->close();
 
 <!-- Registration Form -->
 <div class="register-form">
-    <h2>Register for <?= htmlspecialchars($event_name) ?></h2>
+    <h2>Register for <?php echo htmlspecialchars($event['event_name']); ?></h2>
     <form action="submit_registration.php" method="POST">
         <input type="hidden" name="event_id" value="<?= htmlspecialchars($event_id) ?>">
-        
+
         <label for="name">Full Name:</label>
         <input type="text" id="name" name="name" value="<?= htmlspecialchars($fullname) ?>" placeholder="Enter your full name" required>
 
@@ -103,7 +87,8 @@ $conn->close();
 <!-- Additional Styles -->
 <style>
     /* Ensure the body and HTML take full height */
-    html, body {
+    html,
+    body {
         height: 100%;
         margin: 0;
         font-family: Arial, sans-serif;
@@ -112,45 +97,58 @@ $conn->close();
     /* Adjust form size */
     .register-form {
         background-color: #fff;
-        padding: 20px; /* Reduced padding */
+        padding: 20px;
+        /* Reduced padding */
         border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        /* Lighter shadow */
         width: 100%;
-        max-width: 650px; /* Slightly increased width */
-        margin: 15px auto; /* Slightly increased margin */
+        max-width: 650px;
+        /* Slightly increased width */
+        margin: 15px auto;
+        /* Slightly increased margin */
     }
 
     .register-form h2 {
-        font-size: 20px; /* Reduced font size */
+        font-size: 20px;
+        /* Reduced font size */
         margin-bottom: 10px;
         text-align: center;
     }
 
     .register-form label {
         display: block;
-        margin: 8px 0 4px; /* Reduced spacing */
+        margin: 8px 0 4px;
+        /* Reduced spacing */
         font-weight: bold;
-        font-size: 14px; /* Reduced font size */
+        font-size: 14px;
+        /* Reduced font size */
         color: #333;
     }
 
-    .register-form input, .register-form select {
+    .register-form input,
+    .register-form select {
         width: 100%;
-        padding: 8px; /* Reduced padding */
+        padding: 8px;
+        /* Reduced padding */
         font-size: 14px;
-        margin-bottom: 15px; /* Less margin */
+        margin-bottom: 15px;
+        /* Less margin */
         border: 1px solid #ddd;
         border-radius: 5px;
     }
 
     .submit-button {
         width: 100%;
-        padding: 10px; /* Reduced padding */
-        font-size: 14px; /* Reduced font size */
+        padding: 10px;
+        /* Reduced padding */
+        font-size: 14px;
+        /* Reduced font size */
         background-color: #e67e22;
         color: white;
         border: none;
-        border-radius: 20px; /* Slightly less rounded */
+        border-radius: 20px;
+        /* Slightly less rounded */
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
@@ -162,11 +160,14 @@ $conn->close();
     /* Adjust footer size */
     footer {
         text-align: center;
-        padding: 15px; /* Reduced padding */
+        padding: 15px;
+        /* Reduced padding */
         background-color: #e67e22;
         color: white;
-        font-size: 14px; /* Reduced font size */
-        margin-top: 50px; /* Less margin */
+        font-size: 14px;
+        /* Reduced font size */
+        margin-top: 50px;
+        /* Less margin */
         border-top: 1px solid #ddd;
     }
 
@@ -177,5 +178,3 @@ $conn->close();
         width: 100%;
     }
 </style>
-
-

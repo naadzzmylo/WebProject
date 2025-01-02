@@ -1,21 +1,6 @@
 <?php
-session_start();
+include('header.php'); 
 
-// Replace these with your actual database credentials
-$servername = "localhost";
-$username = "root";  // your database username
-$password = "";      // your database password
-$dbname = "jomrun"; // your database name
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$error_message = "";
 $success_message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -59,8 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Close database connection
 $conn->close();
 ?>
-
-<?php include('header.php'); ?>
 
 <!DOCTYPE html>
 <html lang="en">

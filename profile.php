@@ -1,21 +1,8 @@
 <?php
 include('header.php');
 
-// Assuming you have the user logged in and the user ID is stored in session
-session_start();
 $user_id = $_SESSION['user_id']; // Assuming user_id is stored in session
 
-// Database connection
-$servername = "localhost";
-$username = "root"; 
-$password = "";      
-$dbname = "jomrun"; 
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Fetch user data from the database
 $sql = "SELECT * FROM users WHERE id = '$user_id'";

@@ -1,22 +1,11 @@
 <?php
-// Start the session to access session variables
-session_start();
+include('header.php'); 
 
-// Replace these with your actual database credentials
-$servername = "localhost";
-$username = "root";  // your database username
-$password = "";      // your database password
-$dbname = "jomrun"; // your database name
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (isset($_SESSION['user_id'])) {
+    // Redirect to login page
+    header("Location: index.php");
+    exit;
 }
-
-$error_message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form input values
@@ -54,11 +43,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Close database connection
 $conn->close();
 ?>
 
-<?php include('header.php'); ?>
+<?php ?>
 
 <!DOCTYPE html>
 <html lang="en">

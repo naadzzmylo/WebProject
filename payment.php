@@ -12,18 +12,6 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $event_id = isset($_GET['event_id']) ? intval($_GET['event_id']) : null; // Sanitize input
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "jomrun";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
-
 // Fetch event data
 $event_name = "";
 $event_location = "";
