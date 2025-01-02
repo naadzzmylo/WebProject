@@ -1,206 +1,217 @@
-<?php include('header.php'); ?>
+<?php
+include('header.php');
 
-<div class="container">
-    <div class="event-page">
-        <!-- Left: Image Slider with Next/Prev Arrows -->
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "jomrun";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Get the event ID from the URL
+$event_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Fetch event details
+$eventQuery = "SELECT * FROM events WHERE event_id = ?";
+$stmt = $conn->prepare($eventQuery);
+$stmt->bind_param("i", $event_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $event = $result->fetch_assoc();
+} else {
+    die("Event not found!");
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .event-slider {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 300px;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arrow:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .event-details {
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .event-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .event-date,
+        .event-time,
+        .event-location {
+            margin: 5px 0;
+        }
+
+        .register-button-slider {
+            display: inline-block;
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #e67e22;
+            border-radius: 25px;
+            text-decoration: none;
+            text-align: center;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .register-button-slider:hover {
+            background-color: #d35400;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #e67e22;
+            color: white;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Event Slider with Details -->
         <div class="event-slider">
             <div class="slider">
-                <img src="path/to/event-image1.jpg" alt="Slide 1" class="slide">
-                <img src="path/to/event-image2.jpg" alt="Slide 2" class="slide">
-                <img src="path/to/event-image3.jpg" alt="Slide 3" class="slide">
+                <!-- Display the cover image -->
+                <img src="<?php echo $event['cover_image']; ?>" alt="Cover Image" class="slide active">
+
+                <!-- Display detail images dynamically if available -->
+                <img src="<?php echo $event['detail_images_1']; ?>" alt="Detail Image 1" class="slide">
+                <img src="<?php echo $event['detail_images_2']; ?>" alt="Detail Image 2" class="slide">
+                <img src="<?php echo $event['detail_images_3']; ?>" alt="Detail Image 3" class="slide">
             </div>
-            <!-- Prev and Next Arrow Buttons -->
             <button class="arrow prev">&#10094;</button>
             <button class="arrow next">&#10095;</button>
-        </div>
 
-        <!-- Right: Event Details and Registration -->
-        <div class="event-details">
-            <h1 class="event-title">Event Title Goes Here</h1>
-            <p class="event-date">Date: 1st Feb 2025 (Saturday)</p>
-            <p class="event-time">Time: 09:00 PM</p>
-            <p class="event-location">Location: Event Location</p>
-            <p class="event-description">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at sapien sit amet risus venenatis efficitur. Nam tincidunt arcu id eros efficitur.
-            </p>
+            <!-- Event Details -->
+            <div class="event-details">
+                <h1 class="event-title"><?php echo htmlspecialchars($event['event_name']); ?></h1>
+                <p class="event-date">Date: <?php echo date("jS M Y (l)", strtotime($event['event_date'])); ?></p>
+                <p class="event-time">Time: <?php echo date("h:i A", strtotime($event['event_time'])); ?></p>
+                <p class="event-location">Location: <?php echo htmlspecialchars($event['event_location']); ?></p>
+            </div>
 
-            <!-- Register Button at the Bottom -->
-            <a href="register_event.php" class="register-button">Register</a>
+            <!-- Register Button -->
+            <a href="register_event.php?id=<?php echo $event['event_id']; ?>" class="register-button-slider">Register</a>
         </div>
     </div>
-</div>
 
-<footer>
-    <p>&copy; 2024 Running Event System. All rights reserved.</p>
-</footer>
+    <footer>
+        <p>&copy; 2024 Running Event System. All rights reserved.</p>
+    </footer>
 
-<!-- Style Section -->
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f6f9;
-        color: #333;
-    }
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
 
-    .container {
-        max-width: 1800px;
-        margin: 0 auto;
-        padding: 40px;
-    }
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
 
-    .event-page {
-        display: flex;
-        gap: 60px; /* Adjusted gap between the two sections */
-    }
-
-    /* Left: Image Slider */
-    .event-slider {
-        flex: 3; /* Increased flex value to make it wider */
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        position: relative;
-        width: 85%; /* Adjusted width to be wider */
-        height: 600px; /* Same height as .event-details */
-    }
-
-    .slider {
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-    }
-
-    .slide {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 10px;
-        display: none; /* Initially hide all images */
-    }
-
-    .slide.active {
-        display: block; /* Display only the active image */
-    }
-
-    /* Arrow buttons */
-    .arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        font-size: 30px;
-        width: 60px;  /* Set a specific width for the circular button */
-        height: 60px; /* Set a specific height for the circular button */
-        border: none;
-        padding: 0; /* Remove padding */
-        cursor: pointer;
-        border-radius: 50%; /* This makes it a perfect circle */
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: center; /* Center the arrow icon */
-        transition: background-color 0.3s ease;
-    }
-
-    .arrow:hover {
-        background-color: rgba(0, 0, 0, 0.8);
-    }
-
-    .prev {
-        left: 10px;
-    }
-
-    .next {
-        right: 10px;
-    }
-
-    /* Right: Event Details */
-    .event-details {
-        flex: 2; /* Kept the flex value of 2 for the event details */
-        background-color: #fff;
-        padding: 20px 30px; /* Adjusted padding */
-        border-radius: 10px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 80%;
-        height: 600px; /* Same height as .event-slider */
-    }
-
-    .event-title {
-        font-size: 40px; /* Reduced title size */
-        font-weight: bold;
-        color: #2c3e50;
-        margin-bottom: 20px; /* Reduced margin */
-    }
-
-    .event-date, .event-time, .event-location, .event-description {
-        font-size: 18px; /* Reduced font size */
-        color: #7f8c8d;
-        margin: 15px 0; /* Reduced margin */
-    }
-
-    /* Register Button */
-    .register-button {
-        display: inline-block;
-        width: 100%; /* Full width of container */
-        padding: 18px 0; /* Reduced padding */
-        font-size: 20px; /* Slightly smaller font size */
-        font-weight: bold;
-        color: #fff;
-        background-color: #e67e22;
-        border-radius: 25px; /* Rounded corners */
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-        margin-top: 30px; /* Reduced margin */
-        text-align: center;
-    }
-
-    .register-button:hover {
-        background-color: #d35400;
-    }
-
-    footer {
-        text-align: center;
-        padding: 30px;
-        background-color: #e67e22;
-        color: white;
-        font-size: 16px;
-        margin-top: 70px;
-        border-top: 2px solid #ddd;
-    }
-</style>
-
-<!-- Script Section -->
-<script>
-    // JavaScript to control the image slider with Next/Prev buttons
-    const slides = document.querySelectorAll('.slide');
-    let currentSlide = 0;
-
-    // Function to show the current slide
-    function showSlide(index) {
-        slides.forEach(slide => slide.classList.remove('active')); // Hide all slides
-        slides[index].classList.add('active'); // Show the current slide
-    }
-
-    // Show the first slide initially
-    showSlide(currentSlide);
-
-    // Next button functionality
-    document.querySelector('.next').addEventListener('click', function() {
-        currentSlide = (currentSlide + 1) % slides.length; // Move to next slide
         showSlide(currentSlide);
-    });
 
-    // Prev button functionality
-    document.querySelector('.prev').addEventListener('click', function() {
-        currentSlide = (currentSlide - 1 + slides.length) % slides.length; // Move to previous slide
-        showSlide(currentSlide);
-    });
-</script>
+        document.querySelector('.next').addEventListener('click', function() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        document.querySelector('.prev').addEventListener('click', function() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        });
+    </script>
+</body>
+
+</html>

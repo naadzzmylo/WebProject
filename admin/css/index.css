@@ -1,0 +1,687 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f6f9;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #ff6f00; /* Orange */
+    width: 250px;
+    height: 100vh;
+    padding-top: 20px;
+    position: fixed;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-header h2 {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.sidebar-menu {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    padding: 15px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Sidebar button styling */
+.sidebar-menu li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 20px; /* Added padding for space inside the box */
+    border: 2px solid white; /* Always visible border */
+    border-radius: 5px;
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+.sidebar-menu li a:hover {
+    background-color: #ff8c1a; /* Slightly darker orange */
+    border-color: white; /* Border stays white */
+    transform: scale(1.05); /* Slightly enlarged on hover */
+}
+
+.sidebar-menu li a:active {
+    background-color: #e65100; /* Darker shade of orange */
+    border-color: white; /* Keep the border on active state */
+}
+
+/* Top Bar */
+.topbar {
+    background-color: white; /* White background */
+    height: 60px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between; /* Ensures spacing between logo and logout button */
+    align-items: center;
+    padding: 0 30px;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo in the center of the top bar */
+.topbar-logo {
+    flex: 1; /* This allows the logo container to grow and take up remaining space */
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center; /* Vertically center the logo */
+}
+
+.topbar-logo .logo {
+    width: 150px; /* Set the size of the logo */
+    height: auto;
+}
+
+/* Properly position the logout button on the top bar */
+.topbar-right {
+    display: flex;
+    justify-content: flex-end; /* Align the logout button to the right */
+    align-items: center;
+}
+
+.topbar-right .logout-button {
+    color: white;
+    text-decoration: none;
+    background-color: #d32f2f; /* Red */
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.topbar-right .logout-button:hover {
+    background-color: #b71c1c; /* Darker red */
+    transform: scale(1.05);
+}
+
+.topbar-right .logout-button:active {
+    background-color: #9a1d1d;
+}
+
+/* Main Content */
+.content {
+    margin-left: 250px;
+    padding: 30px;
+    background-color: white;
+    width: calc(100% - 250px); /* Fill remaining width */
+    margin-top: 80px; /* Offset for the fixed topbar */
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.content h1 {
+    color: #333;
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 18px;
+    color: #555;
+}
+
+.content p:hover {
+    color: #ff8c1a;
+}
+
+/* Make the sidebar responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .content {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* Button for Add Event */
+.add-event-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.add-event-button {
+    background-color: #ff6f00; /* Orange */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-event-button:hover {
+    background-color: #e65100; /* Darker Orange */
+    transform: scale(1.05);
+}
+
+.add-event-button:active {
+    background-color: #d32f2f; /* Red when clicked */
+}
+
+/* Table Styles */
+.events-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    background-color: white; /* Always white background */
+}
+
+.events-table th, .events-table td {
+    padding: 12px 20px;
+    text-align: center; /* Center the table headers */
+    border: 1px solid #ddd;
+}
+
+.events-table th {
+    background-color: #ff6f00; /* Orange header */
+    color: white;
+    font-weight: bold;
+}
+
+.events-table tbody tr:nth-child(even) {
+    background-color: #ffffff; /* Set alternating rows to white */
+}
+
+/* Status Styles */
+.status-coming {
+    color: green;
+    font-weight: bold;
+}
+
+.status-past {
+    color: red;
+    font-weight: bold;
+}
+
+/* Table Actions */
+.events-table td a {
+    text-decoration: none;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.events-table .edit-button {
+    background-color: #4CAF50; /* Green */
+}
+
+.events-table .edit-button:hover {
+    background-color: #388E3C; /* Darker Green */
+}
+
+.events-table .delete-button {
+    background-color: #d32f2f; /* Red */
+}
+
+.events-table .delete-button:hover {
+    background-color: #b71c1c; /* Darker Red */
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    .events-table {
+        font-size: 14px;
+    }
+
+    .events-table th, .events-table td {
+        padding: 8px 10px;
+    }
+}
+
+/* Form Layout */
+.add-event-form {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: space-between; /* Space between left and right sections */
+    gap: 20px; /* Space between the two sections */
+    padding: 20px;
+    width: 100%;
+}
+
+.add-event-form .form-left, .add-event-form .form-right {
+    flex: 1; /* Allow both sides to take equal width */
+    min-width: 45%; /* Ensures they are responsive on smaller screens */
+}
+
+.add-event-form .form-group {
+    margin-bottom: 15px;
+}
+
+.add-event-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.add-event-form input[type="text"],
+.add-event-form input[type="date"],
+.add-event-form input[type="file"],
+.add-event-form select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+.add-event-form select {
+    width: 100%; /* Make dropdown 100% of the form's width */
+    height: 40px; /* Set height */
+    font-size: 16px; /* Larger text size */
+}
+
+.add-event-form input:focus,
+.add-event-form select:focus {
+    border-color: #ff6f00;
+    outline: none;
+}
+
+.add-event-form button.submit-button {
+    background-color: #ff6f00;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.add-event-form button.submit-button:hover {
+    background-color: #e65100;
+    transform: scale(1.05);
+}
+
+.add-event-form button.submit-button:active {
+    background-color: #d32f2f;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .add-event-form .form-left, .add-event-form .form-right {
+        min-width: 100%; /* Ensure both form sections stack vertically */
+    }
+}
+
+/* Event Category Section */
+.add-event-form .form-group label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Dropdown container */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: auto; /* Adjusted for smaller width */
+}
+
+/* Dropdown content */
+.dropdown-content {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: 5px;  /* Reduced gap between columns */
+    background-color: #fff;
+    padding: 8px 12px; /* Reduced padding to make it smaller */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: auto;  /* Ensures the dropdown content is only as wide as needed */
+    max-width: 250px; /* Optional: Set a maximum width for the dropdown */
+}
+
+/* Button for Add Event */
+.add-event-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Dashboard Box */
+.dashboard-box {
+    background-color: white;
+    padding: 15px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.dashboard-box:hover {
+    transform: translateY(-5px);
+    background-color: #f5f5f5;
+}
+
+/* Box Colors */
+.total-event {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.total-user {
+    background-color: #FF9800; /* Orange */
+    color: white;
+}
+
+.coming-event {
+    background-color: #03A9F4; /* Blue */
+    color: white;
+}
+
+.past-event {
+    background-color: #E91E63; /* Pink */
+    color: white;
+}
+
+.dashboard-box h2 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.dashboard-box p {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Dashboard Box Styles */
+.dashboard-boxes {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.dashboard-box {
+    display: flex;
+    align-items: center;
+    background-color: #f4f6f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon Styling */
+.box-icon {
+    font-size: 40px;
+    color: #ff6f00;
+    margin-right: 15px;
+}
+
+/* Content Styling */
+.box-content h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.box-content p {
+    font-size: 16px;
+    font-weight: normal;
+    color: #555;
+}
+
+/* Events Section */
+.events-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.coming-events, .past-events {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    width: 45%;
+}
+
+.coming-events h2, .past-events h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.coming-events ul, .past-events ul {
+    list-style-type: none;
+}
+
+.coming-events li, .past-events li {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.events-section .coming-events {
+    background-color: #03A9F4; /* Blue */
+    color: white;
+}
+
+.events-section .past-events {
+    background-color: #E91E63; /* Pink */
+    color: white;
+}
+
+/* Add these styles to position the event tables side by side */
+.event-tables {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.table-container {
+    width: 48%; /* Ensures both tables take up almost half of the container */
+    background-color: #f4f6f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Apply responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .events-section {
+        flex-direction: column;
+    }
+
+    .coming-events, .past-events {
+        width: 100%;
+    }
+}
+/* Login Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh; /* Ensures the container takes up full height */
+    position: absolute; /* Make the container fill the page */
+    background: url("/Web Development/admin/image/home1.jpg") no-repeat center center fixed; 
+    background-size: cover; /* Make the background image cover the entire container */
+}
+
+
+/* Login Box */
+.login-box {
+    background-color: white;
+    width: 400px;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 1s ease-out;
+}
+
+/* Title */
+.login-box h2 {
+    color: #FF6F00; /* Match the orange color */
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Input Fields */
+.input-container {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-container label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.input-container input:focus {
+    border-color: #FF6F00; /* Focused input fields match the color */
+}
+
+/* Remember Me */
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.remember-me input {
+    margin-right: 8px;
+}
+
+/* Login Button */
+.login-btn {
+    background-color: #FF6F00;
+    color: white;
+    padding: 14px 30px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-btn:hover {
+    background-color: #E65100;
+    transform: scale(1.05);
+}
+
+.login-btn:active {
+    background-color: #D32F2F;
+}
+
+/* Footer */
+.footer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #777;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-50px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Styles */
+@media (max-width: 480px) {
+    .login-box {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .login-box h2 {
+        font-size: 24px;
+    }
+
+    .input-container input,
+    .login-btn {
+        font-size: 14px;
+    }
+}

@@ -1,55 +1,94 @@
+<?php
+include('header.php');
 
-<?php include('header.php'); ?>
+// Assuming you have the user logged in and the user ID is stored in session
+session_start();
+$user_id = $_SESSION['user_id']; // Assuming user_id is stored in session
+
+// Database connection
+$servername = "localhost";
+$username = "root"; 
+$password = "";      
+$dbname = "jomrun"; 
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch user data from the database
+$sql = "SELECT * FROM users WHERE id = '$user_id'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    $fullname = $user['fullname'];
+    $username = $user['username']; // Fetch the username
+    $email = $user['email'];
+    $phone_number = $user['phone_number'];
+    $address = $user['address'];
+    $gender = $user['gender']; // Fetch gender
+} else {
+    echo "No user found.";
+}
+
+$conn->close();
+?>
 
 <div class="container">
     <div class="profile-page">
         <!-- Left: Profile Information -->
         <div class="profile-left">
-            <!-- Profile Image below Profile Information title -->
             <div class="profile-image">
                 <img src="https://cdn3.iconfinder.com/data/icons/vector-icons-6/96/256-512.png" alt="Profile Image" class="profile-img">
             </div>
+           <div class="profile-info">
+    <p><strong>Username:</strong> <?= htmlspecialchars($username) ?></p>
+    <p><strong>Name:</strong> <?= htmlspecialchars($fullname) ?></p>
+    <p><strong>Gender:</strong> <?= htmlspecialchars($gender) ?></p> <!-- Gender after Fullname -->
+    <p><strong>Email:</strong> <?= htmlspecialchars($email) ?></p>
+    <p><strong>Phone:</strong> <?= htmlspecialchars($phone_number) ?></p>
+    <p><strong>Address:</strong> <?= htmlspecialchars($address) ?></p>
+</div>
 
-            <!-- Profile Info Section (Name, Email, etc.) -->
-            <div class="profile-info">
-                <p><strong>Name:</strong> John Doe</p>
-                <p><strong>Email:</strong> john@example.com</p>
-                <p><strong>Phone:</strong> 123-456-7890</p>
-                <p><strong>Address:</strong> 123 Main St, City, Country</p>
-            </div>
         </div>
 
         <!-- Right: Tabs for Profile Details and Events Participated -->
         <div class="profile-right">
-            <!-- Tab Navigation -->
             <ul class="tab-nav">
                 <li class="tab-item active" id="profile-tab">Profile</li>
                 <li class="tab-item" id="events-tab">Events Participated</li>
             </ul>
 
-            <!-- Tab Content -->
             <div class="tab-content">
-                <!-- Profile Tab Content with Form to Edit Profile -->
                 <div class="tab-panel active" id="profile-edit">
                     <h2>Edit Profile</h2>
-                    <form action="update_profile.php" method="post">
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" value="John Doe" required>
+                   <form action="update_profile.php" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="<?= htmlspecialchars($fullname) ?>" required>
 
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" value="john@example.com" required>
+    <label for="gender">Gender:</label> <!-- Gender field after fullname -->
+    <select id="gender" name="gender" required>
+        <option value="male" <?= $gender === 'male' ? 'selected' : '' ?>>Male</option>
+        <option value="female" <?= $gender === 'female' ? 'selected' : '' ?>>Female</option>
+        <option value="other" <?= $gender === 'other' ? 'selected' : '' ?>>Other</option>
+    </select>
 
-                        <label for="phone">Phone:</label>
-                        <input type="text" id="phone" name="phone" value="123-456-7890" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
 
-                        <label for="address">Address:</label>
-                        <textarea id="address" name="address" rows="4" required>123 Main St, City, Country</textarea>
+    <label for="phone_number">Phone:</label>
+    <input type="text" id="phone_number" name="phone_number" value="<?= htmlspecialchars($phone_number) ?>" required>
 
-                        <button type="submit" class="btn-submit">Save Changes</button>
-                    </form>
+    <label for="address">Address:</label>
+    <textarea id="address" name="address" rows="4" required><?= htmlspecialchars($address) ?></textarea>
+
+    <button type="submit" class="btn-submit">Save Changes</button>
+</form>
+
                 </div>
 
-                <!-- Events Participated Tab Content -->
                 <div class="tab-panel" id="events-participated">
                     <h2>Events Participated</h2>
                     <div class="events-list">
@@ -60,28 +99,32 @@
                                 <p>Participated in the annual marathon event. A great experience running with hundreds of others!</p>
                             </div>
                         </div>
-                        <div class="event-item">
-                            <div class="event-date">June 2023</div>
+                       <div class="event-item">
+                            <div class="event-date">January 2024</div>
                             <div class="event-details">
-                                <strong>Summer Fun Run</strong>
-                                <p>A fun run during the summer season. Great weather and even better company!</p>
+                                <strong>Running Marathon 2024</strong>
+                                <p>Participated in the annual marathon event. A great experience running with hundreds of others!</p>
                             </div>
                         </div>
-                        <div class="event-item">
-                            <div class="event-date">December 2023</div>
+						<div class="event-item">
+                            <div class="event-date">January 2024</div>
                             <div class="event-details">
-                                <strong>Winter Charity Walk</strong>
-                                <p>Walked for a cause in the cold winter months to raise funds for charity. A very rewarding event!</p>
+                                <strong>Running Marathon 2024</strong>
+                                <p>Participated in the annual marathon event. A great experience running with hundreds of others!</p>
                             </div>
                         </div>
-                        <!-- Additional events can be added here -->
-                    </div>
+						<div class="event-item">
+                            <div class="event-date">January 2024</div>
+                            <div class="event-details">
+                                <strong>Running Marathon 2024</strong>
+                                <p>Participated in the annual marathon event. A great experience running with hundreds of others!</p>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <footer>
     <p>&copy; 2024 Running Event System. All rights reserved.</p>
 </footer>
@@ -102,6 +145,16 @@
         flex-direction: column;
         justify-content: flex-start;
     }
+	
+	select {
+    width: 100%; /* Make dropdown width match other input fields */
+    padding: 12px; /* Same padding as text inputs */
+    font-size: 16px; /* Consistent font size */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
 
     .container {
         display: flex;

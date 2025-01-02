@@ -1,16 +1,75 @@
 <?php include('header.php'); ?>
-
 <?php
-// Capture the GET parameters passed from the registration page
-$event_id = $_GET['event_id'];
-$category = $_GET['category'];
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login page
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+$event_id = isset($_GET['event_id']) ? intval($_GET['event_id']) : null; // Sanitize input
+
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "jomrun";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
+
+// Fetch event data
+$event_name = "";
+$event_location = "";
+$price = "";
+
+if (!$event_id) {
+    // If no event_id is provided, select the first event from the database
+    $event_sql = "SELECT event_id FROM events LIMIT 1";
+    $event_stmt = $conn->prepare($event_sql);
+    $event_stmt->execute();
+    $event_result = $event_stmt->get_result();
+
+    if ($event_result->num_rows > 0) {
+        $event = $event_result->fetch_assoc();
+        $event_id = $event['event_id']; // Use the first event's ID
+    } else {
+        echo "<p>No events found.</p>";
+        exit;
+    }
+}
+
+// Fetch event details using the event_id
+$event_sql = "SELECT event_name, event_date, event_location, price FROM events WHERE event_id = ?";
+$event_stmt = $conn->prepare($event_sql);
+$event_stmt->bind_param("i", $event_id);
+$event_stmt->execute();
+$event_result = $event_stmt->get_result();
+
+if ($event_result->num_rows > 0) {
+    $event = $event_result->fetch_assoc();
+    $event_name = $event['event_name'];
+    $event_location = $event['event_location'];
+    $price = $event['price'];
+} else {
+    echo "<p>Event not found.</p>";
+    exit;
+}
+
+$conn->close();
 ?>
 
 <div class="container">
     <div class="payment">
-        <h3>Event: <?php echo "Event $event_id"; ?></h3>
-        <p>Category: <?php echo $category; ?></p>
-        <p>Price: $50</p>
+        <h3>Event: <?php echo htmlspecialchars($event_name); ?></h3>
+        <p>Location: <?php echo htmlspecialchars($event_location); ?></p>
+        <p>Price: $<?php echo htmlspecialchars($price); ?></p>
         <form id="registrationForm">
             <input type="button" value="Complete Registration" class="btn-submit" onclick="showSuccessModal()">
         </form>
@@ -98,7 +157,7 @@ $category = $_GET['category'];
     footer {
         text-align: center;
         padding: 10px;
-        background-color: #333;
+        background-color: #e67e22;
         color: white;
         position: fixed;
         width: 100%;

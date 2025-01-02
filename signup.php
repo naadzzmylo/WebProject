@@ -1,4 +1,63 @@
-<?php include('header.php'); ?>
+<?php
+include('header.php');
+
+// Replace these with your actual database credentials
+$servername = "localhost";
+$username = "root";  // your database username
+$password = "";      // your database password
+$dbname = "jomrun"; // your database name
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$error_message = "";
+
+// Form submission handling
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get form input values
+    $username = $_POST['username'];
+    $fullname = $_POST['fullname'];
+    $email = $_POST['email'];
+    $phone_number = $_POST['phone_number'];  // Updated to match the new field name
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm-password'];
+
+    // Sanitize inputs to prevent SQL injection
+    $username = $conn->real_escape_string($username);
+    $fullname = $conn->real_escape_string($fullname);
+    $email = $conn->real_escape_string($email);
+    $phone_number = $conn->real_escape_string($phone_number);  // Updated to match the new field name
+    $password = $conn->real_escape_string($password);
+    $confirm_password = $conn->real_escape_string($confirm_password);
+
+    // Check if passwords match
+    if ($password !== $confirm_password) {
+        $error_message = "Passwords do not match.";
+    } else {
+        // Hash the password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // Insert the data into the database
+        $sql = "INSERT INTO users (username, fullname, email, phone_number, password) VALUES ('$username', '$fullname', '$email', '$phone_number', '$hashed_password')";
+
+        if ($conn->query($sql) === TRUE) {
+            // Registration successful, redirect to the login page
+            header("Location: login.php"); // Redirect to login page instead of profile
+            exit();
+        } else {
+            $error_message = "Error: " . $conn->error;
+        }
+    }
+}
+
+// Close database connection
+$conn->close();
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,18 +70,21 @@
     <div class="container">
         <div class="signup-form">
             <h2>Sign Up</h2>
-            <form action="profile.php" method="post">
+            <?php if (!empty($error_message)) : ?>
+                <p class="error-message"><?= htmlspecialchars($error_message) ?></p>
+            <?php endif; ?>
+            <form action="signup.php" method="post">
                 <label for="username">Username:</label>
                 <input type="text" name="username" placeholder="Enter your username" required>
-                
+
                 <label for="fullname">Full Name:</label>
                 <input type="text" name="fullname" placeholder="Enter your full name" required>
 
                 <label for="email">Email:</label>
                 <input type="email" name="email" placeholder="Enter your email" required>
-                
-                <label for="number">Phone Number:</label>
-                <input type="text" name="number" placeholder="Enter your phone number" required>
+
+                <label for="phone_number">Phone Number:</label>
+                <input type="text" name="phone_number" placeholder="Enter your phone number" required>
 
                 <label for="password">Password:</label>
                 <input type="password" name="password" placeholder="Enter your password" required>

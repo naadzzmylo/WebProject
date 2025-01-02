@@ -1,3 +1,63 @@
+<?php
+// Start the session to access session variables
+session_start();
+
+// Replace these with your actual database credentials
+$servername = "localhost";
+$username = "root";  // your database username
+$password = "";      // your database password
+$dbname = "jomrun"; // your database name
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$error_message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get form input values
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Sanitize email and password to prevent SQL injection
+    $email = $conn->real_escape_string($email);
+    $password = $conn->real_escape_string($password);
+
+    // Query to check if the user exists
+    $sql = "SELECT id, password FROM users WHERE email = '$email'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // User found, now check if password matches
+        $row = $result->fetch_assoc();
+        
+        // Check if password is correct using password_verify
+        if (password_verify($password, $row['password'])) {
+            // Password is correct, start a session
+            $_SESSION['user_id'] = $row['id']; // Store user ID in session
+            $_SESSION['email'] = $email;       // Optionally, store email or other user data
+            
+            // Redirect to the homepage or logged-in page
+            header("Location: index.php"); // Replace with your desired page
+            exit();
+        } else {
+            // Incorrect password
+            $error_message = "Incorrect password.";
+        }
+    } else {
+        // No user found with the provided email
+        $error_message = "No user found with that email.";
+    }
+}
+
+// Close database connection
+$conn->close();
+?>
+
 <?php include('header.php'); ?>
 
 <!DOCTYPE html>
@@ -11,7 +71,10 @@
     <div class="container">
         <div class="login-form">
             <h2>Login</h2>
-            <form action="profile.php" method="post">
+            <?php if (!empty($error_message)) : ?>
+                <p class="error-message"><?= htmlspecialchars($error_message) ?></p>
+            <?php endif; ?>
+            <form action="" method="post">
                 <label for="email">Email:</label>
                 <input type="email" name="email" placeholder="Enter your email" required>
 
@@ -24,8 +87,6 @@
             <p>Don't have an account? <a href="signup.php">Sign up here</a></p>
         </div>
     </div>
-
- 
 
     <!-- CSS at the bottom -->
     <style>
@@ -60,7 +121,6 @@
         }
 
         .login-form h2 {
-   
             color: black; /* Changed the color to black */
             padding: 25px;
             text-align: center;
@@ -120,8 +180,6 @@
         .login-form a:hover {
             text-decoration: underline;
         }
-
-      
     </style>
 </body>
 </html>
